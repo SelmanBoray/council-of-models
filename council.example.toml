@@ -1,0 +1,48 @@
+# council-of-models configuration
+#
+# Copy this file to ./council.toml (project-local) or ~/.config/council/config.toml
+# (user-wide). Lookup order: --config <path>  ->  ./council.toml  ->
+# ~/.config/council/config.toml  ->  built-in defaults. Every key is optional;
+# missing keys fall back to the defaults shown here.
+#
+# Model ids have the form "<provider>:<model>". The model part may contain
+# slashes or further colons. Providers and the env var each one needs:
+#
+#   openrouter:<vendor>/<model>   OPENROUTER_API_KEY   e.g. openrouter:openai/gpt-5.1
+#   anthropic:<model>             ANTHROPIC_API_KEY    e.g. anthropic:claude-opus-5-5
+#   openai:<model>                OPENAI_API_KEY       e.g. openai:gpt-5.1
+#   ollama:<model>                OLLAMA_HOST (optional, default http://localhost:11434)
+#                                                      e.g. ollama:llama3.1
+#   fake:<name>                   none (offline, deterministic; for demos and tests)
+#                                                      e.g. fake:alpha
+
+# Council members: each answers the question, then anonymously ranks all answers
+# (its own included). At most 26 members, no duplicates.
+members = [
+    "openrouter:openai/gpt-5.1",
+    "openrouter:google/gemini-3-pro-preview",
+    "openrouter:anthropic/claude-sonnet-4.5",
+    "openrouter:x-ai/grok-4",
+]
+
+# The chairman reads every answer and every review, then writes the final answer.
+# It does not have to be a member. If you set `members` but leave `chairman` out,
+# the first member chairs.
+chairman = "openrouter:google/gemini-3-pro-preview"
+
+# Optional debate rounds before reviewing: each member sees the others' anonymized
+# answers and may revise its own. 0 disables debate. Each round costs one extra
+# call per member.
+debate_rounds = 0
+
+# Where runs are stored (one JSON file per run under <data_dir>/runs/).
+# "~" is expanded; relative paths are relative to the current working directory.
+data_dir = "./data"
+
+# Max output tokens per model call. Reasoning models spend part of this budget on
+# thinking, so keep it generous.
+max_tokens = 4096
+
+# Fully offline demo council (no API keys needed):
+# members  = ["fake:alpha", "fake:beta", "fake:gamma"]
+# chairman = "fake:alpha"
